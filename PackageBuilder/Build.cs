@@ -210,6 +210,7 @@ class Build : NukeBuild
     async Task<VRCPackageManifest> GetManifestFromRelease(Release release)
     {
         if (release.Assets.Count == 0) return null;
+        if (!release.Assets.Any(asset => asset.Name.CompareTo(PackageManifestFilename) == 0)) return null;
         // Release must have package.json or else it will throw an exception here
         ReleaseAsset manifestAsset =
             release.Assets.First(asset => asset.Name.CompareTo(PackageManifestFilename) == 0);

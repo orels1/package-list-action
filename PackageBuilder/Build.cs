@@ -139,7 +139,7 @@ class Build : NukeBuild
                 if (manifest == null)
                 {
                     Serilog.Log.Error($"Could not get manifest from {release.Name}");
-                    return;
+                    continue;
                 }
                 
                 ReleaseAsset zipAsset = release.Assets.First(asset => asset.Name.EndsWith(".zip"));
@@ -155,7 +155,7 @@ class Build : NukeBuild
             var latestManifest = await GetManifestFromRelease(latestRelease);
             if (latestManifest == null)
             {
-                throw new Exception($"Could not get Manifest for release {latestRelease.Name}");
+                throw new Exception($"Could not get Manifest for latest release {latestRelease.Name}");
             }
 
             var repoList = new VRCRepoList(packages)
@@ -209,6 +209,7 @@ class Build : NukeBuild
 
     async Task<VRCPackageManifest> GetManifestFromRelease(Release release)
     {
+        if (release.Assets.Count == 0) return null;
         // Release must have package.json or else it will throw an exception here
         ReleaseAsset manifestAsset =
             release.Assets.First(asset => asset.Name.CompareTo(PackageManifestFilename) == 0);

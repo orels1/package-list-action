@@ -234,7 +234,10 @@ class Build : NukeBuild
             {
                 throw new Exception($"Could not get Manifest for release {release.Name}");
             }
-            
+            if (!Directory.Exists(ListSourceDirectory / WebPageIndexFilename)) {
+                Serilog.Log.Warning($"Unable to locate the website source in {ListSourceDirectory / WebPageIndexFilename}, skipping pages build");
+                return;
+            }
             var indexReadPath = ListSourceDirectory / WebPageIndexFilename;
             var indexWritePath = ListPublishDirectory / WebPageIndexFilename;
             string indexTemplateContent = File.ReadAllText(indexReadPath);
